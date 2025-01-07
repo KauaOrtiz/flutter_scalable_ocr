@@ -196,11 +196,11 @@ class ScalableOCRState extends State<ScalableOCR> {
   Future startLiveFeed() async {
     _cameras = await availableCameras();
     _controller = CameraController(
-        _cameras[widget.cameraSelection], ResolutionPreset.low);
+        _cameras[widget.cameraSelection], ResolutionPreset.medium);
     final camera = _cameras[widget.cameraSelection];
     _controller = CameraController(
       camera,
-      ResolutionPreset.low,
+      ResolutionPreset.medium,
       enableAudio: false,
     );
     _controller?.initialize().then((_) {
@@ -334,24 +334,24 @@ class ScalableOCRState extends State<ScalableOCR> {
       final RenderBox renderBox =
           cameraPrev.currentContext?.findRenderObject() as RenderBox;
 
-      // var painter = TextRecognizerPainter(
-      //     recognizedText,
-      //     inputImage.metadata!.size,
-      //     inputImage.metadata!.rotation,
-      //     renderBox, (value) {
-      //   widget.getScannedText(value);
-      // }, getRawData: (value) {
-      //   if (widget.getRawData != null) {
-      //     widget.getRawData!(value);
-      //   }
-      // },
-      //     boxBottomOff: widget.boxBottomOff,
-      //     boxTopOff: widget.boxTopOff,
-      //     boxRightOff: widget.boxRightOff,
-      //     boxLeftOff: widget.boxRightOff,
-      //     paintboxCustom: widget.paintboxCustom);
-      //
-      // customPaint = CustomPaint(painter: painter);
+      var painter = TextRecognizerPainter(
+          recognizedText,
+          inputImage.metadata!.size,
+          inputImage.metadata!.rotation,
+          renderBox, (value) {
+        widget.getScannedText(value);
+      }, getRawData: (value) {
+        if (widget.getRawData != null) {
+          widget.getRawData!(value);
+        }
+      },
+          boxBottomOff: widget.boxBottomOff,
+          boxTopOff: widget.boxTopOff,
+          boxRightOff: widget.boxRightOff,
+          boxLeftOff: widget.boxRightOff,
+          paintboxCustom: widget.paintboxCustom);
+
+      customPaint = CustomPaint(painter: painter);
     } else {
       customPaint = null;
     }
