@@ -196,11 +196,11 @@ class ScalableOCRState extends State<ScalableOCR> {
   Future startLiveFeed() async {
     _cameras = await availableCameras();
     _controller = CameraController(
-        _cameras[widget.cameraSelection], ResolutionPreset.max);
+        _cameras[widget.cameraSelection], ResolutionPreset.low);
     final camera = _cameras[widget.cameraSelection];
     _controller = CameraController(
       camera,
-      ResolutionPreset.high,
+      ResolutionPreset.low,
       enableAudio: false,
     );
     _controller?.initialize().then((_) {
