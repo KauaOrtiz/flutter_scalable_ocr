@@ -30,7 +30,7 @@ flutter:
       android:
         default_package: camera_android
       ios:
-        default_package: camera_avfoundation
+        default_package: camera_oundation
 
   # To add assets to your package, add an assets section, like this:
   # assets:

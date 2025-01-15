@@ -10,11 +10,11 @@ class TextRecognizerPainter extends CustomPainter {
   TextRecognizerPainter(this.recognizedText, this.absoluteImageSize,
       this.rotation, this.renderBox, this.getScannedText,
       {this.boxLeftOff = 4,
-      this.boxBottomOff = 2,
-      this.boxRightOff = 4,
-      this.boxTopOff = 2,
-      this.getRawData,
-      this.paintboxCustom});
+        this.boxBottomOff = 2,
+        this.boxRightOff = 4,
+        this.boxTopOff = 2,
+        this.getRawData,
+        this.paintboxCustom});
 
   /// ML kit recognizer
   final RecognizedText recognizedText;
@@ -120,6 +120,25 @@ class TextRecognizerPainter extends CustomPainter {
 
             var parsedText = textBlock.text;
             scannedText += " ${textBlock.text}";
+
+            final ParagraphBuilder builder = ParagraphBuilder(
+              ParagraphStyle(
+                  textAlign: TextAlign.left,
+                  fontSize: 14,
+                  textDirection: TextDirection.ltr),
+            );
+            builder.pushStyle(
+                ui.TextStyle(color: Colors.white, background: background));
+            builder.addText(parsedText);
+            builder.pop();
+
+            canvas.drawParagraph(
+              builder.build()
+                ..layout(ParagraphConstraints(
+                  width: right - left,
+                )),
+              Offset(left, top),
+            );
           }
         }
       }
@@ -128,7 +147,6 @@ class TextRecognizerPainter extends CustomPainter {
       getRawData!(textBlocks);
     }
     getScannedText(scannedText);
-
   }
 
   @override
