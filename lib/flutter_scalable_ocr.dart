@@ -7,6 +7,8 @@ import 'package:flutter/material.dart';
 import './text_recognizer_painter.dart';
 import 'package:google_mlkit_text_recognition/google_mlkit_text_recognition.dart';
 import 'package:camera/camera.dart';
+import 'dart:io';
+import 'package:flutter/services.dart';
 
 class ScalableOCR extends StatefulWidget {
   const ScalableOCR(
@@ -82,6 +84,13 @@ class ScalableOCRState extends State<ScalableOCR> {
   double maxWidth = 0;
   double maxHeight = 0;
   String convertingAmount = "";
+
+  final _orientations = {
+    DeviceOrientation.portraitUp: 0,
+    DeviceOrientation.landscapeLeft: 90,
+    DeviceOrientation.portraitDown: 180,
+    DeviceOrientation.landscapeRight: 270,
+  };
 
   @override
   void initState() {
@@ -202,6 +211,9 @@ class ScalableOCRState extends State<ScalableOCR> {
       camera,
       ResolutionPreset.high,
       enableAudio: false,
+      imageFormatGroup: Platform.isAndroid
+          ? ImageFormatGroup.nv21
+          : ImageFormatGroup.bgra8888,
     );
     _controller?.initialize().then((_) {
       if (!mounted) {
@@ -255,27 +267,44 @@ class ScalableOCRState extends State<ScalableOCR> {
     final bytes = allBytes.done().buffer.asUint8List();
 
     final Size imageSize =
-        Size(image.width.toDouble(), image.height.toDouble());
+    Size(image.width.toDouble(), image.height.toDouble());
 
     final camera = _cameras[0];
-    final imageRotation =
-        InputImageRotationValue.fromRawValue(camera.sensorOrientation);
-    if (imageRotation == null) return;
 
-    final inputImageFormat =
-        InputImageFormatValue.fromRawValue(image.format.raw);
-    if (inputImageFormat == null) return;
+    final sensorOrientation = camera.sensorOrientation;
+    InputImageRotation? imageRotation;
+    if (Platform.isIOS) {
+      imageRotation = InputImageRotationValue.fromRawValue(sensorOrientation);
+    } else if (Platform.isAndroid) {
+      var rotationCompensation = _orientations[_controller!.value.deviceOrientation];
+      if (rotationCompensation == null) return null;
+      if (camera.lensDirection == CameraLensDirection.front) {
+        // front-facing
+        rotationCompensation = (sensorOrientation + rotationCompensation) % 360;
+      } else {
+        // back-facing
+        rotationCompensation = (sensorOrientation - rotationCompensation + 360) % 360;
+      }
+      imageRotation = InputImageRotationValue.fromRawValue(rotationCompensation);
+    }
+    if (imageRotation == null) return null;
+
+    final imageFormat = InputImageFormatValue.fromRawValue(image.format.raw);
+    if (imageFormat == null ||
+        (Platform.isAndroid && imageFormat != InputImageFormat.nv21) ||
+        (Platform.isIOS && imageFormat != InputImageFormat.bgra8888)) return null;
+
+    if (image.planes.length != 1) return null;
 
     final planeData = InputImageMetadata(
       size: imageSize,
       rotation: imageRotation,
-      format: inputImageFormat,
+      format: imageFormat,
       bytesPerRow: image.planes[0].bytesPerRow,
     );
 
     final inputImage =
-        // InputImage.fromBytes(bytes: bytes, inputImageData: inputImageData);
-        InputImage.fromBytes(bytes: bytes, metadata: planeData);
+    InputImage.fromBytes(bytes: bytes, metadata: planeData);
 
     processImage(inputImage);
   }
