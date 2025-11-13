@@ -20,10 +20,11 @@ packages:
   camera:
     dependency: transitive
     description:
-      name: camera
-      sha256: eefad89f262a873f38d21e5eec853461737ea074d7c9ede39f3ceb135d201cab
-      url: "https://pub.dev"
-    source: hosted
+      path: "packages/camera/camera"
+      ref: main
+      resolved-ref: "3eaa62cf68aaa1206570938a0f629adc19bbcb5d"
+      url: "https://github.com/KauaOrtiz/packages.git"
+    source: git
     version: "0.11.3"
   camera_android_camerax:
     dependency: transitive
@@ -146,17 +147,18 @@ packages:
   google_mlkit_commons:
     dependency: transitive
     description:
-      name: google_mlkit_commons
-      sha256: "8f40fbac10685cad4715d11e6a0d86837d9ad7168684dfcad29610282a88e67a"
-      url: "https://pub.dev"
-    source: hosted
+      path: "packages/google_mlkit_commons"
+      ref: HEAD
+      resolved-ref: "9b7693320fbcff57db47feb0030956e6ff20b908"
+      url: "https://github.com/KauaOrtiz/google_ml_kit_flutter.git"
+    source: git
     version: "0.11.0"
   google_mlkit_text_recognition:
     dependency: transitive
     description:
       path: "packages/google_mlkit_text_recognition"
       ref: HEAD
-      resolved-ref: f3397499e96eb9901f7d259a13fb1521b03d992f
+      resolved-ref: "9b7693320fbcff57db47feb0030956e6ff20b908"
       url: "https://github.com/KauaOrtiz/google_ml_kit_flutter.git"
     source: git
     version: "0.15.0"
